@@ -38,7 +38,7 @@ export const userValidation = async (
     image:req.body.image,
   };
 
-  const { error } = validation.validate(payload);
+  const { error } = validation.validate(payload, { abortEarly: false });
 
   // if (error) {
   //   let errorMessages = '';
@@ -54,7 +54,7 @@ export const userValidation = async (
   if (error !== null && error!== undefined) {
     return res
       .status(406)
-      .json({ message: 'Validation failes', errors: error!.details });
+      .json({ message: 'Validation failes', errors: error.details });
   }
 
   next();
