@@ -1,3 +1,5 @@
+import { NextFunction, Request, Response } from 'express';
+
 import { HttpError } from '../models/http-error';
 import { User } from '../models/user';
 
@@ -20,11 +22,11 @@ import { User } from '../models/user';
 // };
 
 export const registerUser = async (
-  req: { body: { name: string; email: string; password: string } },
-  _res: any,
-  next: (arg0: HttpError) => any,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, image } = req.body;
 
   let userExist;
 
@@ -48,8 +50,8 @@ export const registerUser = async (
   const createdUser = new User({
     name,
     email,
-    image:
-      'https://images.freeimages.com/images/large-previews/218/my-dog-cutter-1499799.jpg',
+    image,
+      // 'https://images.freeimages.com/images/large-previews/218/my-dog-cutter-1499799.jpg',
     // image: req.file.path.replace('\\', '/'),
     password,
   });
@@ -57,9 +59,13 @@ export const registerUser = async (
   try {
     await createdUser.save();
     console.log('yeee, działa')
-  } catch (err: unknown) {
+  } catch (_err) {
     const error = new HttpError('Signing up failed', 500);
     // console.log(err.message);
     return next(error);
   }
+
+  res.status(201).json(
+    // {userId:createdUser.id, email:createdUser.email}
+    );
 };

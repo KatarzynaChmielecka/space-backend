@@ -9,8 +9,14 @@
     "ts-node": {
         "esm": true
     },
+    "import/resolver": {
+        "node": {
+          "extensions": [".js",".ts"]
+        }
+      },
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "src/**/*.js"
     ],
     "exclude": [
         "node_modules"
