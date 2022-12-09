@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 // import { HttpError } from '../models/http-error';
 
 const validation = Joi.object({
-  name: Joi.string()
+  username: Joi.string()
     .min(2)
     .required()
     .messages({
@@ -32,7 +32,7 @@ export const userValidation = async (
   next: NextFunction,
 ) => {
   const payload = {
-    name: req.body.name,
+    username: req.body.username,
     email: req.body.email,
     password: req.body.password,
     image:req.body.image,
@@ -54,7 +54,7 @@ export const userValidation = async (
   if (error !== null && error!== undefined) {
     return res
       .status(406)
-      .json({ message: 'Validation failes', errors: error.details });
+      .json({ message: 'Validation failed', errors: error.details });
   }
 
   next();
