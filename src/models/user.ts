@@ -2,15 +2,6 @@ import passportLocalMongoose from 'passport-local-mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { Schema, model } from 'mongoose';
 
-// export interface UserInterface {
-//   // body: any;
-//   // toObject(arg0: { getters: boolean }): any;
-//   name: string;
-//   email: string;
-//   password: string;
-//   image: string;
-// }
-
 const options = {
   errorMessages: {
     MissingPasswordError: 'No password was given',
@@ -29,17 +20,16 @@ const options = {
 const userSchema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  // password: { type: String, required: true, minlength: 8 },
-  image: { type: String, required: true },
+   image: { type: String, required: true },
 });
 
 userSchema.plugin(uniqueValidator);
 userSchema.plugin(
   passportLocalMongoose,
   {
-    usernameField: 'email', // Ustawienie pola "email" jako pole używane do logowania
+    usernameField: 'email', //field email will be used to register/login, not username
     options
   },
 );
 
-export const User = model('User', userSchema);
+export const UserModel = model('User', userSchema);

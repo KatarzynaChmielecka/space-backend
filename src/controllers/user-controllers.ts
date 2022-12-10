@@ -1,15 +1,15 @@
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
 
-import { User } from '../models/user';
+import { UserModel } from '../models/user';
 
 export const registerUser = async (
   req: Request,
   res: Response,
   _next: NextFunction,
 ) => {
-  User.register(
-    new User({
+  UserModel.register(
+    new UserModel({
       username: req.body.username,
       email: req.body.email,
       image: req.body.image,
@@ -17,10 +17,7 @@ export const registerUser = async (
     req.body.password,
     (err, user) => {
       if (err) {
-        // res.statusCode = 500;
-        // res.setHeader('Content-Type', 'application/json');
-        // res.json({ err: 'somwething ssalskla' });
-
+  
         if (req.body.email){
           res.statusCode = 422;
           res.setHeader('Content-Type', 'application/json');
