@@ -6,13 +6,17 @@ import passport from 'passport';
 import session from 'express-session';
 
 import userRoutes from './src/routes/user-routes';
-import { User } from './src/types/userTypes';
+import { UserInterface } from './src/types/userTypes';
 import { UserModel } from './src/models/user';
+
+// import { UserModel } from './src/models/user';
+
+// import {Strategy as LocalStrategy} from 'passport-local';
 
 const app = express();
 
 dotenv.config();
-type _User = User;
+type _User = UserInterface;
 
 declare global {
   namespace Express {
@@ -20,6 +24,8 @@ declare global {
   }
 }
 
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     secret: `${process.env.SECRET_KEY}`,
@@ -27,12 +33,16 @@ app.use(
     saveUninitialized: true,
   }),
 );
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+// passport.use(new LocalStrategy(UserModel.authenticate()));
+// passport.use(UserModel.createStrategy());
 passport.serializeUser(UserModel.serializeUser());
 passport.deserializeUser(UserModel.deserializeUser());
+
+app.get('/', (_req, res) => {
+  res.send('Welcome on my backend part');
+});
 app.use('/user', userRoutes);
 
 mongoose.set('strictQuery', false);

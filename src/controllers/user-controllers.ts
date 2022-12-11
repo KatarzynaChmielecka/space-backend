@@ -17,12 +17,11 @@ export const registerUser = async (
     req.body.password,
     (err, user) => {
       if (err) {
-  
-        if (req.body.email){
+        if (req.body.email) {
           res.statusCode = 422;
           res.setHeader('Content-Type', 'application/json');
           res.json({ err: 'usera exista' });
-        }  
+        }
         return;
       } else {
         user.save((err: any, _user: any) => {
