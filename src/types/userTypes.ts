@@ -1,11 +1,11 @@
-import { Document } from 'mongoose';
+// import { Document } from 'mongoose';
 
-export interface User extends Document {
-  name: string;
-  email: string;
-  password: string;
-  image: string;
-}
+// export interface UserInterface extends Document {
+//   name: string;
+//   email: string;
+//   password: string;
+//   image: string;
+// }
 
 
 
