@@ -20,16 +20,13 @@ const options = {
 const userSchema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-   image: { type: String, required: true },
+  image: { type: String, required: true },
 });
 
 userSchema.plugin(uniqueValidator);
-userSchema.plugin(
-  passportLocalMongoose,
-  {
-    usernameField: 'email', //field email will be used to register/login, not username
-    options
-  },
-);
+userSchema.plugin(passportLocalMongoose, {
+  usernameField: 'email', //field email will be used to register/login, not username
+  options,
+});
 
 export const UserModel = model('User', userSchema);

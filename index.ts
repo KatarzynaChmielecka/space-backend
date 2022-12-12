@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import session from 'express-session';
+import {Strategy as LocalStrategy} from 'passport-local';
 
 import userRoutes from './src/routes/user-routes';
 import { UserInterface } from './src/types/userTypes';
@@ -11,7 +12,7 @@ import { UserModel } from './src/models/user';
 
 // import { UserModel } from './src/models/user';
 
-// import {Strategy as LocalStrategy} from 'passport-local';
+
 
 const app = express();
 
@@ -35,10 +36,10 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-// passport.use(new LocalStrategy(UserModel.authenticate()));
 // passport.use(UserModel.createStrategy());
 passport.serializeUser(UserModel.serializeUser());
 passport.deserializeUser(UserModel.deserializeUser());
+passport.use(new LocalStrategy(UserModel.authenticate()));
 
 app.get('/', (_req, res) => {
   res.send('Welcome on my backend part');
