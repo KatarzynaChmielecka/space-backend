@@ -1,14 +1,10 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
-import { UserModel } from '../models/user';
+import UserModel from '../models/user';
 
-export const registerUser = async (
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-) => {
+export const registerUser = async (req: Request, res: Response) => {
   UserModel.register(
     new UserModel({
       username: req.body.username,
@@ -21,22 +17,22 @@ export const registerUser = async (
         if (req.body.email) {
           res.statusCode = 422;
           res.setHeader('Content-Type', 'application/json');
-          res.json({ err: 'usera exista' });
+          res.json({ message: err.message });
         }
         return;
       } else {
-        user.save((err: any, _user: any) => {
+        user.save((err: string) => {
           if (err) {
             res.statusCode = 500;
             res.setHeader('Content-Type', 'application/json');
-            res.json({ err: 'something' });
+            res.json({ err: 'Something went wrong. Please try again later' });
 
             return;
           }
           passport.authenticate('local')(req, res, () => {
             res.statusCode = 201;
             res.setHeader('Content-Type', 'application/json');
-            res.json({ success: true, status: 'Registration Successful!' });
+            res.json({ success: true, message: 'Welcome to the crew.' });
           });
         });
       }
@@ -44,45 +40,19 @@ export const registerUser = async (
   );
 };
 
-// router.post("/login", function (req, res) {
-// if (!req.body.username) {
-//     res.json({ success: false, message: "Username was not given" })
-// }
-// else if (!req.body.password) {
-//     res.json({ success: false, message: "Password was not given" })
-// }
-// else {
-//     passport.authenticate("local", function (err, user, info) {
-//         if (err) {
-//             res.json({ success: false, message: err });
-//         }
-//         else {
-//             if (!user) {
-//                 res.json({ success: false, message: "username or password incorrect" });
-//             }
-//             else {
-//                 const token = jwt.sign({ userId: user._id, username: user.username }, secretkey, { expiresIn: "24h" });
-//                 res.json({ success: true, message: "Authentication successful", token: token });
-//             }
-//         }
-//     })(req, res);
-// }
-// });
-
-export const loginUser = async (req:Request, res:Response) => {
+export const loginUser = async (req: Request, res: Response) => {
   if (!req.body.email) {
-    res.json({ success: false, message: 'Email was not given' });
+    res.json({ success: false, message: 'Email is required' });
   } else if (!req.body.password) {
-    res.json({ success: false, message: 'Password was not given' });
+    res.json({ success: false, message: 'Password is required' });
   } else {
-    passport.authenticate('local', function (err, user,) {
+    passport.authenticate('local', function (err, user, info) {
       if (err) {
-        res.json({ success: false, message: err });
+        res.json({ success: false, message: info.message });
       } else {
         if (!user) {
           res.json({
-            success: false,
-            message: 'email or password incorrect',
+            message: info.message,
           });
         } else {
           const token = jwt.sign(
@@ -92,7 +62,7 @@ export const loginUser = async (req:Request, res:Response) => {
           );
           res.json({
             success: true,
-            message: 'Authentication successful',
+            message: `Hello ${user.username}. You are logged in.`,
             token: token,
           });
         }

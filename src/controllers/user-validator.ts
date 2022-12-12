@@ -2,17 +2,11 @@ import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 
 const validation = Joi.object({
-  username: Joi.string().min(2).required().messages({
-    'string.name': 'Name is required, and it should have at least 2 characters',
-  }),
+  username: Joi.string().min(2).required(),
   email: Joi.string().email().trim(true).required().messages({
     'string.email': 'Please check your email. Maybe you forgot to use "@"?',
   }),
-  password: Joi.string()
-    .min(8)
-    .trim(true)
-    .required()
-    .messages({ 'string.password': 'Password should have 8 characters' }),
+  password: Joi.string().min(8).trim(true).required(),
   image: Joi.string().required(),
 });
 
