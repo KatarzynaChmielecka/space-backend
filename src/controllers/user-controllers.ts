@@ -58,7 +58,7 @@ export const loginUser = async (req: Request, res: Response) => {
           const token = jwt.sign(
             { userId: user._id, username: user.username },
             `${process.env.ACCESS_TOKEN}`,
-            { expiresIn: '24h' },
+            { expiresIn: '20s' }, //TODO:change it at the end
           );
           res.json({
             success: true,
