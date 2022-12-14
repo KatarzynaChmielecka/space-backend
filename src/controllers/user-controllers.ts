@@ -58,12 +58,16 @@ export const loginUser = async (req: Request, res: Response) => {
           const token = jwt.sign(
             { userId: user._id, username: user.username },
             `${process.env.ACCESS_TOKEN}`,
-            { expiresIn: '20s' }, //TODO:change it at the end
+            { expiresIn: '10m' }, //TODO:change it at the end
           );
+          // res.redirect(`/${user._id}`)
+          // req.session.user = user;
+          // res.setHeader('Authorization', 'Bearer '+ token);
           res.json({
             success: true,
             message: `Hello ${user.username}. You are logged in.`,
             token: token,
+            user:user
           });
         }
       }

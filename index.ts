@@ -19,7 +19,10 @@ declare global {
     interface User extends _User {}
   }
 }
-
+// declare module 'express-session' {
+//   export interface SessionData {
+//     user: { [key: string]: any };
+//   }}
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(

@@ -36,7 +36,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     const user = await UserModel.findById(decodedToken.userId);
 
-    if (user || !decodedToken.userId) {
+    if (user && !decodedToken.userId) {
       err = new Error('This token is no longer valid. Please sign in again.');
       err.statusCode = 400;
       console.log('333:', err.message);
