@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import UserModel from '../models/user';
 
@@ -60,17 +60,38 @@ export const loginUser = async (req: Request, res: Response) => {
             `${process.env.ACCESS_TOKEN}`,
             { expiresIn: '10m' }, //TODO:change it at the end
           );
-          // res.redirect(`/${user._id}`)
-          // req.session.user = user;
-          // res.setHeader('Authorization', 'Bearer '+ token);
+
           res.json({
             success: true,
             message: `Hello ${user.username}. You are logged in.`,
             token: token,
-            user:user
+            user: user,
           });
         }
       }
     })(req, res);
   }
 };
+
+export const userData = async (req: Request, res: Response) => {
+  let user;
+  try {
+    if (req.user !== undefined) {
+      user = await UserModel.findById(req?.user.id);
+    }
+  } catch (err) {
+    res.json(err);
+  }
+  res.status(200).json({ user: user });
+};
+
+export const allNames=(_req:Request, res: Response, next: NextFunction) => {
+  UserModel.find({}, {username:1, _id:0}, (err, users) => {
+    if (err || !users) {
+      res.status(401).send({ message: 'Unauthorized' });
+      next(err);
+    } else {
+      res.json({ status: 'success', users: users });
+    }
+  });
+}

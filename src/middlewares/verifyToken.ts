@@ -1,7 +1,7 @@
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 
-import UserModel from '../models/user';
+import UserModel, { UserDoc } from '../models/user';
 
 interface UserToken extends JwtPayload {
   userId: string;
@@ -17,9 +17,9 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(' ')[1]; //authorization: 'Bearer TOKEN'
   try {
     if (!token) {
-      err = new Error("You aren't allowed to get here");
+      err = new Error("You aren't allowed to be here");
       err.statusCode = 401;
-      console.log('111:', err.message);
+
       throw err;
     }
     const decodedToken = verify(
@@ -30,22 +30,22 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     if (!decodedToken.userId) {
       err = new Error('Invalid token provided.');
       err.statusCode = 403;
-      console.log('222:', err.message);
+
       throw err;
     }
 
-    const user = await UserModel.findById(decodedToken.userId);
+    const user = (await UserModel.findById(decodedToken.userId)) as UserDoc;
 
     if (user && !decodedToken.userId) {
       err = new Error('This token is no longer valid. Please sign in again.');
       err.statusCode = 400;
-      console.log('333:', err.message);
+
       throw err;
     }
+    req.user = user;
 
     next();
   } catch (err: any) {
-    console.log('MIDDLEWARE ERROR:', err.message);
     return res
       .status(err.statusCode || 400)
       .json({ message: err.message || 'Oops! Something went wrong.' });

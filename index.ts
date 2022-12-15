@@ -19,10 +19,7 @@ declare global {
     interface User extends _User {}
   }
 }
-// declare module 'express-session' {
-//   export interface SessionData {
-//     user: { [key: string]: any };
-//   }}
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -53,4 +50,8 @@ mongoose
   .then(() => {
     app.listen(process.env.PORT || 5000);
   })
-  .catch((err: string) => console.log(err));
+  .catch((res) =>
+    res
+      .status(503)
+      .json({ message: 'Connection error. Please try again later' }),
+  );
