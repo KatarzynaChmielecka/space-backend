@@ -9,7 +9,7 @@ export const registerUser = async (req: Request, res: Response) => {
     new UserModel({
       username: req.body.username,
       email: req.body.email,
-      image: req.body.image,
+      // image: req.body.image,
     }),
     req.body.password,
     (err, user) => {
@@ -77,7 +77,7 @@ export const userData = async (req: Request, res: Response) => {
   let user;
   try {
     if (req.user !== undefined) {
-      user = await UserModel.findById(req?.user.id);
+      user = await UserModel.findById(req.user.id);
     }
   } catch (err) {
     res.json(err);
@@ -85,8 +85,8 @@ export const userData = async (req: Request, res: Response) => {
   res.status(200).json({ user: user });
 };
 
-export const allNames=(_req:Request, res: Response, next: NextFunction) => {
-  UserModel.find({}, {username:1, _id:0}, (err, users) => {
+export const allNames = (_req: Request, res: Response, next: NextFunction) => {
+  UserModel.find({}, { username: 1, _id: 0 }, (err, users) => {
     if (err || !users) {
       res.status(401).send({ message: 'Unauthorized' });
       next(err);
@@ -94,4 +94,4 @@ export const allNames=(_req:Request, res: Response, next: NextFunction) => {
       res.json({ status: 'success', users: users });
     }
   });
-}
+};

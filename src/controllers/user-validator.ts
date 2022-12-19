@@ -7,7 +7,7 @@ const validation = Joi.object({
     'string.email': 'Please check your email. Maybe you forgot to use "@"?',
   }),
   password: Joi.string().min(8).trim(true).required(),
-  image: Joi.string().required(),
+  // image: Joi.string().required(),
 });
 
 export const userValidation = async (
@@ -19,7 +19,7 @@ export const userValidation = async (
     username: req.body.username,
     email: req.body.email,
     password: req.body.password,
-    image: req.body.image,
+    // image: req.body.image,
   };
 
   const { error } = validation.validate(payload, { abortEarly: false });
