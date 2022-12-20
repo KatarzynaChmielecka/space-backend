@@ -5,11 +5,12 @@ import { NextFunction, Request, Response } from 'express';
 import UserModel from '../models/user';
 
 export const registerUser = async (req: Request, res: Response) => {
+  const file = (req as { file?: any }).file;
   UserModel.register(
     new UserModel({
       username: req.body.username,
       email: req.body.email,
-      // image: req.body.image,
+      avatar: file?.path.replace('\\', '/'),
     }),
     req.body.password,
     (err, user) => {
