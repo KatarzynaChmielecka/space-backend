@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
 
-import UserModel from '../models/user';
+import UserModel, { UserDoc } from '../models/user';
+import { Types } from 'mongoose';
 
 export const registerUser = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;
@@ -75,7 +76,7 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const userData = async (req: Request, res: Response) => {
-  let user;
+  let user: (UserDoc & { _id: Types.ObjectId; }) | null=null
   try {
     if (req.user !== undefined) {
       user = await UserModel.findById(req.user.id);

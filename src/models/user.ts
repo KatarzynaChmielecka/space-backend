@@ -6,7 +6,7 @@ interface UserInterface {
   username: string;
   email: string;
   password: string;
-  avatar: string;
+  avatar: string | Blob;
 }
 export interface UserDoc extends UserInterface, Document {}
 interface UserModel extends PassportLocalModel<UserDoc> {}
