@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import passport from 'passport';
@@ -11,15 +12,21 @@ import UserModel, { UserDoc } from './src/models/user';
 
 const app = express();
 
-dotenv.config();
 type _User = UserDoc;
 
 declare global {
   namespace Express {
-    interface User extends _User {}
+    interface User extends _User {id?:string}
   }
 }
-
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+  );
+  next();
+});
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(

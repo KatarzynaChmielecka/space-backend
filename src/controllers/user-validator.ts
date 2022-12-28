@@ -7,7 +7,7 @@ const validation = Joi.object({
     'string.email': 'Please check your email. Maybe you forgot to use "@"?',
   }),
   password: Joi.string().min(8).trim(true).required(),
-  image: Joi.string().required(),
+  avatar: Joi.string().required(),
 });
 
 export const userValidation = async (
@@ -15,11 +15,12 @@ export const userValidation = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const file = (req as { file?: any }).file;
   const payload = {
     username: req.body.username,
     email: req.body.email,
     password: req.body.password,
-    image: req.body.image,
+    avatar: file?.path,
   };
 
   const { error } = validation.validate(payload, { abortEarly: false });
