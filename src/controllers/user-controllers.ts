@@ -44,6 +44,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+
   if (!email) {
     res.status(400).json({ success: false, message: 'Email is required' });
   } else if (!password) {
@@ -61,17 +62,24 @@ export const loginUser = async (req: Request, res: Response) => {
             message: 'User does not exist. Maybe you want register instead?',
           });
         } else {
-          const token = jwt.sign(
-            { userId: user._id, username: user.username },
-            `${process.env.ACCESS_TOKEN}`,
-            { expiresIn: '30s' }, //TODO:change it at the end
-          );
-
-          res.status(200).json({
-            success: true,
-            message: `Hello ${user.username}. You are logged in.`,
-            token: token,
-            user: user,
+          req.login(user, function (err) {
+            if (err) {
+              res.json({ success: false, message: err });
+            } else {
+              const token = jwt.sign(
+                { userId: user._id, username: user.username },
+                `${process.env.ACCESS_TOKEN}`,
+                { expiresIn: '60s' }, //TODO:change it at the end
+              );
+              // req.session.token = token;
+              // console.log(req.session.token);
+              res.status(200).json({
+                success: true,
+                message: `Hello ${user.username}. You are logged in.`,
+                token: token,
+                user: user,
+              });
+            }
           });
         }
       }
