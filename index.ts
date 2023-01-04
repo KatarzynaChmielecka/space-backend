@@ -29,8 +29,8 @@ declare global {
 //   }
 // }
 app.use(function (_req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  // res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Credentials', 'true');
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization',
@@ -44,10 +44,6 @@ app.use(
     secret: `${process.env.SECRET_KEY}`,
     resave: false,
     saveUninitialized: true,
-    // cookie: {
-    //   httpOnly: true,
-    //   // maxAge: 60 * 1000, // 1 minuta
-    // },
   }),
 );
 app.use(passport.initialize());

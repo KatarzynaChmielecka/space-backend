@@ -52,12 +52,9 @@ export const loginUser = async (req: Request, res: Response) => {
   } else {
     passport.authenticate('local', function (err, user, info) {
       if (err) {
-        console.log(err);
         res.status(500).json({ success: false, message: info.message });
       } else {
         if (!user) {
-          console.log('2' + err);
-          console.log(info);
           res.status(404).json({
             message: 'User does not exist. Maybe you want register instead?',
           });
@@ -71,8 +68,7 @@ export const loginUser = async (req: Request, res: Response) => {
                 `${process.env.ACCESS_TOKEN}`,
                 { expiresIn: '60s' }, //TODO:change it at the end
               );
-              // req.session.token = token;
-              // console.log(req.session.token);
+
               res.status(200).json({
                 success: true,
                 message: `Hello ${user.username}. You are logged in.`,
