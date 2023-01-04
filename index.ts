@@ -16,11 +16,21 @@ type _User = UserDoc;
 
 declare global {
   namespace Express {
-    interface User extends _User {id?:string}
+    interface User extends _User {
+      id?: string;
+    }
   }
 }
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
+
+// declare module 'express-session' {
+//   interface Session {
+//     token: string;
+//     // user: object;
+//   }
+// }
+app.use(function (_req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Credentials', 'true');
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization',

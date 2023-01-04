@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
+import { Types } from 'mongoose';
 
 import UserModel, { UserDoc } from '../models/user';
-import { Types } from 'mongoose';
 
 export const registerUser = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;
@@ -43,31 +43,39 @@ export const registerUser = async (req: Request, res: Response) => {
 };
 
 export const loginUser = async (req: Request, res: Response) => {
-  if (!req.body.email) {
-    res.json({ success: false, message: 'Email is required' });
-  } else if (!req.body.password) {
-    res.json({ success: false, message: 'Password is required' });
+  const { email, password } = req.body;
+
+  if (!email) {
+    res.status(400).json({ success: false, message: 'Email is required' });
+  } else if (!password) {
+    res.status(400).json({ success: false, message: 'Password is required' });
   } else {
     passport.authenticate('local', function (err, user, info) {
       if (err) {
-        res.json({ success: false, message: info.message });
+        res.status(500).json({ success: false, message: info.message });
       } else {
         if (!user) {
-          res.json({
-            message: info.message,
+          res.status(404).json({
+            message: 'User does not exist. Maybe you want register instead?',
           });
         } else {
-          const token = jwt.sign(
-            { userId: user._id, username: user.username },
-            `${process.env.ACCESS_TOKEN}`,
-            { expiresIn: '10m' }, //TODO:change it at the end
-          );
+          req.login(user, function (err) {
+            if (err) {
+              res.json({ success: false, message: err });
+            } else {
+              const token = jwt.sign(
+                { userId: user._id, username: user.username },
+                `${process.env.ACCESS_TOKEN}`,
+                { expiresIn: '60s' }, //TODO:change it at the end
+              );
 
-          res.json({
-            success: true,
-            message: `Hello ${user.username}. You are logged in.`,
-            token: token,
-            user: user,
+              res.status(200).json({
+                success: true,
+                message: `Hello ${user.username}. You are logged in.`,
+                token: token,
+                user: user,
+              });
+            }
           });
         }
       }
@@ -76,7 +84,7 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const userData = async (req: Request, res: Response) => {
-  let user: (UserDoc & { _id: Types.ObjectId; }) | null=null
+  let user: (UserDoc & { _id: Types.ObjectId }) | null = null;
   try {
     if (req.user !== undefined) {
       user = await UserModel.findById(req.user.id);
