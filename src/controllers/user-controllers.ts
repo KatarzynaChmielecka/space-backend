@@ -42,6 +42,22 @@ export const registerUser = async (req: Request, res: Response) => {
   );
 };
 
+export const patchUserData=async(req: Request, res: Response)=>{
+  const file = (req as { file?: any }).file;
+  const data = {
+    username: req.body.username,
+    email: req.body.email,
+    avatar: "file.path.replace('\\', '/')",
+  };
+
+  try {
+    const { id } = req.params;
+    const result = await UserModel.findByIdAndUpdate(id, data);
+    res.status(200).json({success:true, message:"Your data was updated."})
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Something went wrong with updateing data' });
+  }
+}
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
