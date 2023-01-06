@@ -4,6 +4,7 @@ import UserModel from '../models/user';
 import {
   allNames,
   loginUser,
+  patchUserData,
   registerUser,
   userData,
 } from '../controllers/user-controllers';
@@ -21,7 +22,7 @@ router.post(
   registerUser,
 );
 router.post('/login', loginValidation, loginUser);
-
+router.patch('/:id', auth, patchUserData);
 //test route
 router.get('/all', auth, allNames);
 
