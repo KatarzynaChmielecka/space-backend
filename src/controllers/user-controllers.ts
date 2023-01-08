@@ -47,20 +47,26 @@ export const patchUserData = async (req: Request, res: Response) => {
   const data = {
     username: req.body.username,
     email: req.body.email,
-    // avatar: file.path.replace('\\', '/'),
   };
 
   try {
     const { id } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id !== req.user?._id) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to update this data.',
+      });
+    }
+
     await UserModel.findByIdAndUpdate(id, data);
     res.status(200).json({ success: true, message: 'Your data was updated.' });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: 'Something went wrong with updating data',
-      });
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong with updating data',
+    });
   }
 };
 export const loginUser = async (req: Request, res: Response) => {

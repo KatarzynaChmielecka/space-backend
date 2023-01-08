@@ -22,12 +22,6 @@ declare global {
   }
 }
 
-// declare module 'express-session' {
-//   interface Session {
-//     token: string;
-//     // user: object;
-//   }
-// }
 app.use(function (_req, res, next) {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.header('Access-Control-Allow-Credentials', 'true');
