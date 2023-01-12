@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
 import { Types } from 'mongoose';
+import { nextTick } from 'process';
 
 import UserModel, { UserDoc } from '../models/user';
 
@@ -41,6 +42,17 @@ export const registerUser = async (req: Request, res: Response) => {
     },
   );
 };
+
+export const logoutUser = (req: Request, res: Response, next: NextFunction) =>
+  req.logout((err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ success: false, message: `We couldn't logout you.` });
+    } else {
+      res.status(200).json({ success: true, message: 'See you soon! :)' });
+    }
+  });
 
 export const patchAvatar = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;

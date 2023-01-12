@@ -4,6 +4,7 @@ import UserModel from '../models/user';
 import {
   allNames,
   loginUser,
+  logoutUser,
   patchAvatar,
   patchUserData,
   registerUser,
@@ -25,6 +26,7 @@ router.post(
 router.post('/login', loginValidation, loginUser);
 router.patch('/:id', auth, patchUserData);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchAvatar);
+router.get('/logout', auth, logoutUser)
 //test route
 router.get('/all', auth, allNames);
 

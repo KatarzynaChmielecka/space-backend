@@ -24,7 +24,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       throw err;
     }
     if (token === undefined || !token.includes('.')) {
-      err = new Error("You aren't allowed to be here.Please, login again.");
+      err = new Error("You aren't allowed to be here.Please, login.");
       err.statusCode = 400;
 
       throw err;
