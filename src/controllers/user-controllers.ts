@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import mongoose, { Types } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
-import { Types } from 'mongoose';
 import { nextTick } from 'process';
 
 import UserModel, { UserDoc } from '../models/user';
@@ -149,16 +149,22 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const userData = async (req: Request, res: Response) => {
-  let user: (UserDoc & { _id: Types.ObjectId }) | null = null;
+  // let user: (UserDoc & { _id: Types.ObjectId }) | null = null;
+  const { id } = req.params;
+
+  const user = await UserModel.findById(id);
   try {
-    if (req.user !== undefined) {
-      user = await UserModel.findById(req.user.id);
+    if (user?._id.toString() === req.user?._id.toString()) {
+      res.status(200).json({ user: user });
+    }
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      res.status(500).json({ success: false, message: 'You are not alllowed' });
     }
   } catch (err) {
     console.log(err);
     res.json(err);
   }
-  res.status(200).json({ user: user });
 };
 
 export const allNames = (_req: Request, res: Response, next: NextFunction) => {
