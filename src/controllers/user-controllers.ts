@@ -1,13 +1,25 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import mongoose, { Types } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
-import { nextTick } from 'process';
 
-import UserModel, { UserDoc } from '../models/user';
+import UserModel
+// { UserDoc }
+ from '../models/user';
+
+// import mongoose, { Types } from 'mongoose';
+
+
+
 
 export const registerUser = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;
+  if (req.body.password !== req.body.passwordConfirmation) {
+    
+    res.status(400).json({
+      message: 'Passwords are different',
+    });
+    return;
+  }
   UserModel.register(
     new UserModel({
       username: req.body.username,
@@ -15,6 +27,7 @@ export const registerUser = async (req: Request, res: Response) => {
       avatar: file?.path.replace('\\', '/'),
     }),
     req.body.password,
+
     (err, user) => {
       if (err) {
         if (req.body.email) {
