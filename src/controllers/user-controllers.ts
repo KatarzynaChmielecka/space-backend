@@ -2,19 +2,11 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
 
-import UserModel
-// { UserDoc }
- from '../models/user';
-
-// import mongoose, { Types } from 'mongoose';
-
-
-
+import UserModel from '../models/user';
 
 export const registerUser = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;
   if (req.body.password !== req.body.passwordConfirmation) {
-    
     res.status(400).json({
       message: 'Passwords are different',
     });
@@ -144,7 +136,7 @@ export const loginUser = async (req: Request, res: Response) => {
               const token = jwt.sign(
                 { userId: user._id, username: user.username },
                 `${process.env.ACCESS_TOKEN}`,
-                { expiresIn: '1h' }, //TODO:change it at the end
+                { expiresIn: '1h' },
               );
 
               res.status(200).json({
@@ -162,7 +154,6 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const userData = async (req: Request, res: Response) => {
-  // let user: (UserDoc & { _id: Types.ObjectId }) | null = null;
   const { id } = req.params;
 
   const user = await UserModel.findById(id);

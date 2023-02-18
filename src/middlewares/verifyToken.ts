@@ -64,9 +64,9 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
       throw err;
     }
-    // Check if the token has expired after 60 seconds
+    
     const currentTime = Math.floor(Date.now() / 1000);
-    if (decodedToken.iat! + 60 < currentTime) {
+    if (decodedToken.iat! + 60*60 < currentTime) {
       err = new Error('This token has expired. Please sign in again.');
       err.statusCode = 400;
 
