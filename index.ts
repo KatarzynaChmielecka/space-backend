@@ -1,6 +1,5 @@
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import passport from 'passport';
@@ -9,6 +8,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 
 import userRoutes from './src/routes/user-routes';
 import UserModel, { UserDoc } from './src/models/user';
+
+dotenv.config();
 
 const app = express();
 
@@ -23,10 +24,7 @@ declare global {
 }
 
 app.use(function (_req, res, next) {
-  res.header(
-    'Access-Control-Allow-Origin',
-    'https://space-backend-26zw.onrender.com',
-  );
+  res.header('Access-Control-Allow-Origin', 'https://space-backend-26zw.onrender.com');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header(
     'Access-Control-Allow-Headers',
