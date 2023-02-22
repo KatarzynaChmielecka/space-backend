@@ -1,6 +1,5 @@
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import passport from 'passport';
@@ -9,6 +8,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 
 import userRoutes from './src/routes/user-routes';
 import UserModel, { UserDoc } from './src/models/user';
+
+dotenv.config();
 
 const app = express();
 
@@ -62,8 +63,4 @@ mongoose
   .then(() => {
     app.listen(process.env.PORT || 5000);
   })
-  .catch((res) =>
-    res
-      .status(503)
-      .json({ message: 'Connection error. Please try again later' }),
-  );
+  .catch((err) => console.log(err.message));
