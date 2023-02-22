@@ -1,13 +1,17 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
-import { Types } from 'mongoose';
-import { nextTick } from 'process';
 
-import UserModel, { UserDoc } from '../models/user';
+import UserModel from '../models/user';
 
 export const registerUser = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;
+  if (req.body.password !== req.body.passwordConfirmation) {
+    res.status(400).json({
+      message: 'Passwords are different',
+    });
+    return;
+  }
   UserModel.register(
     new UserModel({
       username: req.body.username,
@@ -15,6 +19,7 @@ export const registerUser = async (req: Request, res: Response) => {
       avatar: file?.path.replace('\\', '/'),
     }),
     req.body.password,
+
     (err, user) => {
       if (err) {
         if (req.body.email) {
@@ -131,7 +136,7 @@ export const loginUser = async (req: Request, res: Response) => {
               const token = jwt.sign(
                 { userId: user._id, username: user.username },
                 `${process.env.ACCESS_TOKEN}`,
-                { expiresIn: '1h' }, //TODO:change it at the end
+                { expiresIn: '1h' },
               );
 
               res.status(200).json({
@@ -149,16 +154,21 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const userData = async (req: Request, res: Response) => {
-  let user: (UserDoc & { _id: Types.ObjectId }) | null = null;
+  const { id } = req.params;
+
+  const user = await UserModel.findById(id);
   try {
-    if (req.user !== undefined) {
-      user = await UserModel.findById(req.user.id);
+    if (user?._id.toString() === req.user?._id.toString()) {
+      res.status(200).json({ user: user });
+    }
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      res.status(500).json({ success: false, message: 'You are not alllowed' });
     }
   } catch (err) {
     console.log(err);
     res.json(err);
   }
-  res.status(200).json({ user: user });
 };
 
 export const allNames = (_req: Request, res: Response, next: NextFunction) => {

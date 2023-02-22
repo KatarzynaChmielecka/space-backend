@@ -30,5 +30,5 @@ router.get('/logout', auth, logoutUser)
 //test route
 router.get('/all', auth, allNames);
 
-router.get('/account', auth, userData);
+router.get('/:id', auth, userData);
 export default router;
