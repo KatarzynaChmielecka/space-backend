@@ -25,7 +25,7 @@ router.post(
   registerUser,
 );
 router.post('/login', loginValidation, loginUser);
-router.patch('/:id/images', fileUpload.single('images'), auth, postImage);
+router.post('/:id/images', fileUpload.single('images'), auth, postImage);
 router.patch('/:id', auth, patchUserData);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchAvatar);
 router.get('/logout', auth, logoutUser);

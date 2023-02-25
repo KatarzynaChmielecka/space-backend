@@ -166,7 +166,6 @@ export const userData = async (req: Request, res: Response) => {
       res.status(500).json({ success: false, message: 'You are not alllowed' });
     }
   } catch (err) {
-    console.log(err);
     res.json(err);
   }
 };
@@ -182,38 +181,9 @@ export const allNames = (_req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-// export const patchAvatar = async (req: Request, res: Response) => {
-//   const file = (req as { file?: any }).file;
-//   const data = { avatar: file?.path.replace('\\', '/') };
-//   try {
-//     const { id } = req.params;
-//     const user = await UserModel.findById(id);
-
-//     if (user?._id.toString() !== req.user?._id.toString()) {
-//       return res.status(403).json({
-//         success: false,
-//         message: 'You are not allowed to update this data.',
-//       });
-//     }
-
-//     await UserModel.findByIdAndUpdate(id, data);
-//     res
-//       .status(200)
-//       .json({ success: true, message: 'Your avatar was updated.' });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: 'Something went wrong with updating avatar',
-//     });
-//   }
-// };
-
 export const postImage = async (req: Request, res: Response) => {
-  console.log('postImage function called');
   const file = (req as { file?: any }).file;
-  console.log('File data:', file); // Sprawdzenie czy dane pliku są odczytywane poprawnie
-  const data = { images: 'https://images.freeimages.com/images/large-previews/cb5/aesthetic-dog-1642000.jpg'};
-  console.log('Data to be saved:', data); // Sprawdzenie czy dane do bazy są poprawnie generowane
+
   try {
     const { id } = req.params;
     const user = await UserModel.findById(id);
@@ -221,18 +191,18 @@ export const postImage = async (req: Request, res: Response) => {
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: 'You are not allowed to update this data.',
+        message: 'You are not allowed to add image.',
       });
     }
 
-    await UserModel.findByIdAndUpdate(id, data);
-    res
-      .status(200)
-      .json({ success: true, message: 'Your avatar was updated.' });
+    user?.images?.push(file.path);
+    await user?.save();
+    res.status(201).json({ success: true, message: 'Your image was added.' });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Something went wrong with updating avatar',
+      message:
+        'Something went wrong during adding image. Please try again later.',
     });
   }
 };
