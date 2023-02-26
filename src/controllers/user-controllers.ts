@@ -166,7 +166,6 @@ export const userData = async (req: Request, res: Response) => {
       res.status(500).json({ success: false, message: 'You are not alllowed' });
     }
   } catch (err) {
-    console.log(err);
     res.json(err);
   }
 };
@@ -180,4 +179,30 @@ export const allNames = (_req: Request, res: Response, next: NextFunction) => {
       res.json({ status: 'success', users: users });
     }
   });
+};
+
+export const postImage = async (req: Request, res: Response) => {
+  const file = (req as { file?: any }).file;
+
+  try {
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to add image.',
+      });
+    }
+
+    user?.images?.push(file.path);
+    await user?.save();
+    res.status(201).json({ success: true, message: 'Your image was added.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        'Something went wrong during adding image. Please try again later.',
+    });
+  }
 };
