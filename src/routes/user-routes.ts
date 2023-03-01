@@ -6,7 +6,8 @@ import {
   loginUser,
   logoutUser,
   patchAvatar,
-  patchUserData,
+  patchUserName,
+  postImage,
   registerUser,
   userData,
 } from '../controllers/user-controllers';
@@ -24,9 +25,10 @@ router.post(
   registerUser,
 );
 router.post('/login', loginValidation, loginUser);
-router.patch('/:id', auth, patchUserData);
+router.post('/:id/images', fileUpload.single('images'), auth, postImage);
+router.patch('/:id/name', auth, patchUserName);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchAvatar);
-router.get('/logout', auth, logoutUser)
+router.get('/logout', auth, logoutUser);
 //test route
 router.get('/all', auth, allNames);
 

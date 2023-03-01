@@ -85,17 +85,22 @@ export const patchAvatar = async (req: Request, res: Response) => {
   }
 };
 
-export const patchUserData = async (req: Request, res: Response) => {
-  const file = (req as { file?: any }).file;
+export const patchUserName = async (req: Request, res: Response) => {
+
   const data = {
     username: req.body.username,
-    email: req.body.email,
   };
 
   try {
     const { id } = req.params;
     const user = await UserModel.findById(id);
-
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+    
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -103,7 +108,17 @@ export const patchUserData = async (req: Request, res: Response) => {
       });
     }
 
-    await UserModel.findByIdAndUpdate(id, data);
+    // await UserModel.findByIdAndUpdate(id, data);
+    const updatedUser = await UserModel.findByIdAndUpdate(id, data, { new: true });
+    console.log(updatedUser);
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+
+
     res.status(200).json({ success: true, message: 'Your data was updated.' });
   } catch (error) {
     res.status(500).json({
@@ -166,7 +181,6 @@ export const userData = async (req: Request, res: Response) => {
       res.status(500).json({ success: false, message: 'You are not alllowed' });
     }
   } catch (err) {
-    console.log(err);
     res.json(err);
   }
 };
@@ -180,4 +194,30 @@ export const allNames = (_req: Request, res: Response, next: NextFunction) => {
       res.json({ status: 'success', users: users });
     }
   });
+};
+
+export const postImage = async (req: Request, res: Response) => {
+  const file = (req as { file?: any }).file;
+
+  try {
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to add image.',
+      });
+    }
+
+    user?.images?.push(file.path);
+    await user?.save();
+    res.status(201).json({ success: true, message: 'Your image was added.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        'Something went wrong during adding image. Please try again later.',
+    });
+  }
 };

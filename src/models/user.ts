@@ -7,6 +7,7 @@ interface UserInterface {
   email: string;
   password: string;
   avatar: string | Blob;
+  images?:string[] | Blob[];
 }
 export interface UserDoc extends UserInterface, Document {}
 interface UserModel extends PassportLocalModel<UserDoc> {}
@@ -23,6 +24,7 @@ const userSchema = new Schema<UserDoc>({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   avatar: { type: String, required: true },
+  images: { type: [String], required: false }
 });
 
 userSchema.plugin(uniqueValidator);

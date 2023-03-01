@@ -10,6 +10,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import userRoutes from './src/routes/user-routes';
 import UserModel, { UserDoc } from './src/models/user';
 
+
 const app = express();
 
 type _User = UserDoc;
@@ -29,7 +30,7 @@ app.use(function (_req, res, next) {
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   );
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
 app.use(bodyParser.json());
@@ -62,8 +63,4 @@ mongoose
   .then(() => {
     app.listen(process.env.PORT || 5000);
   })
-  .catch((res) =>
-    res
-      .status(503)
-      .json({ message: 'Connection error. Please try again later' }),
-  );
+  .catch((err) => console.log(err.message));
