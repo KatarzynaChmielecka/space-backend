@@ -110,7 +110,7 @@ export const patchUserName = async (req: Request, res: Response) => {
 
     // await UserModel.findByIdAndUpdate(id, data);
     const updatedUser = await UserModel.findByIdAndUpdate(id, data, { new: true });
-    console.log(updatedUser);
+  
     if (!updatedUser) {
       return res.status(404).json({
         success: false,
@@ -119,7 +119,7 @@ export const patchUserName = async (req: Request, res: Response) => {
     }
 
 
-    res.status(200).json({ success: true, message: 'Your data was updated.' });
+    res.status(200).json({ success: true, message: 'Your name was updated.' });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -127,6 +127,50 @@ export const patchUserName = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const patchUserEmail = async (req: Request, res: Response) => {
+
+  const data = {
+    username: req.body.email,
+  };
+
+  try {
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+    
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to update this data.',
+      });
+    }
+
+    // await UserModel.findByIdAndUpdate(id, data);
+    const updatedUser = await UserModel.findByIdAndUpdate(id, data);
+   
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+
+
+    res.status(200).json({ success: true, message: 'Your email was updated.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong with updating data',
+    });
+  }
+};
+
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
