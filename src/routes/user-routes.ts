@@ -6,6 +6,7 @@ import {
   loginUser,
   logoutUser,
   patchAvatar,
+  patchUserEmail,
   patchUserName,
   postImage,
   registerUser,
@@ -27,6 +28,7 @@ router.post(
 router.post('/login', loginValidation, loginUser);
 router.post('/:id/images', fileUpload.single('images'), auth, postImage);
 router.patch('/:id/name', auth, patchUserName);
+router.patch('/:id/email', auth, patchUserEmail);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchAvatar);
 router.get('/logout', auth, logoutUser);
 //test route
