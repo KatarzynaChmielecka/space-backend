@@ -131,7 +131,7 @@ export const patchUserName = async (req: Request, res: Response) => {
 export const patchUserEmail = async (req: Request, res: Response) => {
 
   const data = {
-    username: req.body.email,
+    email: req.body.email,
   };
 
   try {
