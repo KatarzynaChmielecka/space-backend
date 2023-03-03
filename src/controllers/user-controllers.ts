@@ -86,7 +86,6 @@ export const patchAvatar = async (req: Request, res: Response) => {
 };
 
 export const patchUserName = async (req: Request, res: Response) => {
-
   const data = {
     username: req.body.username,
   };
@@ -100,7 +99,7 @@ export const patchUserName = async (req: Request, res: Response) => {
         message: 'User not found.',
       });
     }
-    
+
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -109,15 +108,16 @@ export const patchUserName = async (req: Request, res: Response) => {
     }
 
     // await UserModel.findByIdAndUpdate(id, data);
-    const updatedUser = await UserModel.findByIdAndUpdate(id, data, { new: true });
-  
+    const updatedUser = await UserModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+
     if (!updatedUser) {
       return res.status(404).json({
         success: false,
         message: 'User not found.',
       });
     }
-
 
     res.status(200).json({ success: true, message: 'Your name was updated.' });
   } catch (error) {
@@ -129,7 +129,6 @@ export const patchUserName = async (req: Request, res: Response) => {
 };
 
 export const patchUserEmail = async (req: Request, res: Response) => {
-
   const data = {
     email: req.body.email,
   };
@@ -143,7 +142,7 @@ export const patchUserEmail = async (req: Request, res: Response) => {
         message: 'User not found.',
       });
     }
-    
+
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -153,14 +152,13 @@ export const patchUserEmail = async (req: Request, res: Response) => {
 
     // await UserModel.findByIdAndUpdate(id, data);
     const updatedUser = await UserModel.findByIdAndUpdate(id, data);
-   
+
     if (!updatedUser) {
       return res.status(404).json({
         success: false,
         message: 'User not found.',
       });
     }
-
 
     res.status(200).json({ success: true, message: 'Your email was updated.' });
   } catch (error) {
@@ -171,6 +169,49 @@ export const patchUserEmail = async (req: Request, res: Response) => {
   }
 };
 
+export const patchUserPassword = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { newPassword, newPasswordConfirmation } = req.body;
+
+  try {
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to update this data.',
+      });
+    }
+
+    if (newPassword !== newPasswordConfirmation) {
+      return res.status(400).json({
+        success: false,
+        message: 'Passwords are different.',
+      });
+    }
+
+    user.setPassword(newPassword);
+    console.log('Before save:', user);
+    await user.save();
+    console.log('After save:', user);
+    res
+      .status(200)
+      .json({ success: true, message: 'Your password was updated.' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong with updating data',
+    });
+  }
+};
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 

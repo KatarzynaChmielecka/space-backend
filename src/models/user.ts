@@ -6,6 +6,7 @@ interface UserInterface {
   username: string;
   email: string;
   password: string;
+  setPassword: (newPassword: string) => void;
   avatar: string | Blob;
   images?:string[] | Blob[];
 }

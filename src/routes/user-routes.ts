@@ -8,6 +8,7 @@ import {
   patchAvatar,
   patchUserEmail,
   patchUserName,
+  patchUserPassword,
   postImage,
   registerUser,
   userData,
@@ -29,6 +30,7 @@ router.post('/login', loginValidation, loginUser);
 router.post('/:id/images', fileUpload.single('images'), auth, postImage);
 router.patch('/:id/name', auth, patchUserName);
 router.patch('/:id/email', auth, patchUserEmail);
+router.patch('/:id/password', auth, patchUserPassword);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchAvatar);
 router.get('/logout', auth, logoutUser);
 //test route
