@@ -6,11 +6,15 @@ interface UserInterface {
   username: string;
   email: string;
   password: string;
-  setPassword: (newPassword: string) => void;
+
+  changePassword: (password: string, newPasswordConfirmation: string) => void;
+
   avatar: string | Blob;
-  images?:string[] | Blob[];
+  images?: string[] | Blob[];
 }
-export interface UserDoc extends UserInterface, Document {}
+export interface UserDoc extends UserInterface, Document {
+  authenticate(password: string): boolean;
+}
 interface UserModel extends PassportLocalModel<UserDoc> {}
 
 const options = {
@@ -25,7 +29,7 @@ const userSchema = new Schema<UserDoc>({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   avatar: { type: String, required: true },
-  images: { type: [String], required: false }
+  images: { type: [String], required: false },
 });
 
 userSchema.plugin(uniqueValidator);

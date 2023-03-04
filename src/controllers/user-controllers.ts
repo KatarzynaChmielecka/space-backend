@@ -171,10 +171,11 @@ export const patchUserEmail = async (req: Request, res: Response) => {
 
 export const patchUserPassword = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { newPassword, newPasswordConfirmation } = req.body;
+  const { password, newPasswordConfirmation } = req.body;
 
   try {
     const user = await UserModel.findById(id);
+    console.log(user);
 
     if (!user) {
       return res.status(404).json({
@@ -183,6 +184,7 @@ export const patchUserPassword = async (req: Request, res: Response) => {
       });
     }
 
+    console.log(req.user?._id);
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -190,17 +192,8 @@ export const patchUserPassword = async (req: Request, res: Response) => {
       });
     }
 
-    if (newPassword !== newPasswordConfirmation) {
-      return res.status(400).json({
-        success: false,
-        message: 'Passwords are different.',
-      });
-    }
 
-    user.setPassword(newPassword);
-    console.log('Before save:', user);
-    await user.save();
-    console.log('After save:', user);
+    user.changePassword(password, newPasswordConfirmation);
     res
       .status(200)
       .json({ success: true, message: 'Your password was updated.' });
