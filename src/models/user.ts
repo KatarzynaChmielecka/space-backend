@@ -6,14 +6,22 @@ interface UserInterface {
   username: string;
   email: string;
   password: string;
-
+  // authenticate: (password: string) => Promise<boolean>;
   changePassword: (password: string, newPasswordConfirmation: string) => void;
-
+  // comparePassword: (
+  //   password: string,
+  //   callback: (err: Error | null |string |undefined, isMatch?: boolean) => void
+  // ) => void;
   avatar: string | Blob;
   images?: string[] | Blob[];
 }
 export interface UserDoc extends UserInterface, Document {
-  authenticate(password: string): boolean;
+  // authenticate(password: string): boolean;
+
+  authenticate(
+    password: string,
+    cb: (err?: Error | null, user?: this, passwordErr?: Error | null) => void
+  ): void;
 }
 interface UserModel extends PassportLocalModel<UserDoc> {}
 
