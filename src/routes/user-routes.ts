@@ -17,6 +17,7 @@ import { auth } from '../middlewares/verifyToken';
 import { fileUpload } from '../middlewares/file-upload';
 import { loginValidation } from '../controllers/login-validator';
 import { userValidation } from '../controllers/user-validator';
+import { patchPasswordValidation } from '../controllers/patch-password-validator';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.post('/login', loginValidation, loginUser);
 router.post('/:id/images', fileUpload.single('images'), auth, postImage);
 router.patch('/:id/name', auth, patchUserName);
 router.patch('/:id/email', auth, patchUserEmail);
-router.patch('/:id/password', auth, patchUserPassword);
+router.patch('/:id/password', auth, patchPasswordValidation, patchUserPassword);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchAvatar);
 router.get('/logout', auth, logoutUser);
 //test route
