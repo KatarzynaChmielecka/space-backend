@@ -107,7 +107,6 @@ export const patchUserName = async (req: Request, res: Response) => {
       });
     }
 
-    // await UserModel.findByIdAndUpdate(id, data);
     const updatedUser = await UserModel.findByIdAndUpdate(id, data, {
       new: true,
     });
@@ -150,7 +149,6 @@ export const patchUserEmail = async (req: Request, res: Response) => {
       });
     }
 
-    // await UserModel.findByIdAndUpdate(id, data);
     const updatedUser = await UserModel.findByIdAndUpdate(id, data);
 
     if (!updatedUser) {
