@@ -48,7 +48,7 @@ export const registerUser = async (req: Request, res: Response) => {
   );
 };
 
-export const logoutUser = (req: Request, res: Response, next: NextFunction) =>
+export const logoutUser = (req: Request, res: Response) =>
   req.logout((err) => {
     if (err) {
       return res
@@ -86,7 +86,6 @@ export const patchAvatar = async (req: Request, res: Response) => {
 };
 
 export const patchUserName = async (req: Request, res: Response) => {
-
   const data = {
     username: req.body.username,
   };
@@ -100,7 +99,7 @@ export const patchUserName = async (req: Request, res: Response) => {
         message: 'User not found.',
       });
     }
-    
+
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -108,16 +107,16 @@ export const patchUserName = async (req: Request, res: Response) => {
       });
     }
 
-    // await UserModel.findByIdAndUpdate(id, data);
-    const updatedUser = await UserModel.findByIdAndUpdate(id, data, { new: true });
-  
+    const updatedUser = await UserModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+
     if (!updatedUser) {
       return res.status(404).json({
         success: false,
         message: 'User not found.',
       });
     }
-
 
     res.status(200).json({ success: true, message: 'Your name was updated.' });
   } catch (error) {
@@ -129,7 +128,6 @@ export const patchUserName = async (req: Request, res: Response) => {
 };
 
 export const patchUserEmail = async (req: Request, res: Response) => {
-
   const data = {
     email: req.body.email,
   };
@@ -143,7 +141,7 @@ export const patchUserEmail = async (req: Request, res: Response) => {
         message: 'User not found.',
       });
     }
-    
+
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -151,9 +149,8 @@ export const patchUserEmail = async (req: Request, res: Response) => {
       });
     }
 
-    // await UserModel.findByIdAndUpdate(id, data);
     const updatedUser = await UserModel.findByIdAndUpdate(id, data);
-   
+
     if (!updatedUser) {
       return res.status(404).json({
         success: false,
@@ -161,8 +158,56 @@ export const patchUserEmail = async (req: Request, res: Response) => {
       });
     }
 
-
     res.status(200).json({ success: true, message: 'Your email was updated.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong with updating data',
+    });
+  }
+};
+
+export const patchUserPassword = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { password, newPasswordConfirmation } = req.body;
+
+  try {
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to update this password.',
+      });
+    }
+
+    user.authenticate(password, (_err, user, passwordErr) => {
+      if (passwordErr) {
+        if (passwordErr.name === 'IncorrectPasswordError') {
+          return res.status(403).json({
+            success: false,
+            message: "Old password isn't good",
+          });
+        } else {
+          return res.status(500).json({
+            success: false,
+            message: 'Something went wrong with updating password',
+          });
+        }
+      }
+
+      user?.changePassword(password, newPasswordConfirmation);
+      res
+        .status(200)
+        .json({ success: true, message: 'Your password was updated.' });
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
