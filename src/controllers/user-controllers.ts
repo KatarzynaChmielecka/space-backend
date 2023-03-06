@@ -48,7 +48,7 @@ export const registerUser = async (req: Request, res: Response) => {
   );
 };
 
-export const logoutUser = (req: Request, res: Response, next: NextFunction) =>
+export const logoutUser = (req: Request, res: Response) =>
   req.logout((err) => {
     if (err) {
       return res
@@ -186,7 +186,7 @@ export const patchUserPassword = async (req: Request, res: Response) => {
     if (user?._id.toString() !== req.user?._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: 'You are not allowed to update this data.',
+        message: 'You are not allowed to update this password.',
       });
     }
 
@@ -195,12 +195,12 @@ export const patchUserPassword = async (req: Request, res: Response) => {
         if (passwordErr.name === 'IncorrectPasswordError') {
           return res.status(403).json({
             success: false,
-            message: 'Incorrectaaa password.',
+            message: "Old password isn't good",
           });
         } else {
           return res.status(500).json({
             success: false,
-            message: 'Something went wrong with updating data',
+            message: 'Something went wrong with updating password',
           });
         }
       }
@@ -217,6 +217,7 @@ export const patchUserPassword = async (req: Request, res: Response) => {
     });
   }
 };
+
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
