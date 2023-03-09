@@ -169,7 +169,7 @@ export const patchUserEmail = async (req: Request, res: Response) => {
 
 export const patchUserPassword = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { password, newPasswordConfirmation } = req.body;
+  const { password, newPassword, newPasswordConfirmation } = req.body;
 
   try {
     const user = await UserModel.findById(id);
@@ -188,6 +188,10 @@ export const patchUserPassword = async (req: Request, res: Response) => {
       });
     }
 
+    if (newPassword !== newPasswordConfirmation) {
+      return res.status(400).json({ message: 'New password and confirmation do not match.' });
+    }
+    
     user.authenticate(password, (_err, user, passwordErr) => {
       if (passwordErr) {
         if (passwordErr.name === 'IncorrectPasswordError') {
