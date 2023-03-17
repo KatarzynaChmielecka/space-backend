@@ -314,3 +314,34 @@ export const postImage = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const postNote = async (req: Request, res: Response) => {
+  
+
+  try {
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to add note.',
+      });
+    }
+
+    const note = {
+      createdAt: new Date(),
+      text: req.body.note,
+    };
+
+    user?.notes?.push(note)
+    await user?.save();
+    res.status(201).json({ success: true, message: 'Your note was added.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        'Something went wrong during adding note. Please try again later.',
+    });
+  }
+};

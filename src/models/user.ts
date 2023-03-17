@@ -2,6 +2,10 @@ import passportLocalMongoose from 'passport-local-mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { Document, PassportLocalModel, Schema, model } from 'mongoose';
 
+interface Note {
+  createdAt: Date;
+  text: string;
+}
 interface UserInterface {
   username: string;
   email: string;
@@ -9,6 +13,7 @@ interface UserInterface {
   changePassword: (password: string, newPasswordConfirmation: string) => void;
   avatar: string | Blob;
   images?: string[] | Blob[];
+  notes?: Note[];
 }
 export interface UserDoc extends UserInterface, Document {
   authenticate(
@@ -31,6 +36,13 @@ const userSchema = new Schema<UserDoc>({
   email: { type: String, required: true, unique: true },
   avatar: { type: String, required: true },
   images: { type: [String], required: false },
+  notes: [
+    {
+      createdAt: { type: Date, required: false },
+      text: { type: String, required: true },
+      _id:false
+    },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);

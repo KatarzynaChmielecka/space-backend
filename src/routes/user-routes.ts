@@ -10,6 +10,7 @@ import {
   patchUserName,
   patchUserPassword,
   postImage,
+  postNote,
   registerUser,
   userData,
 } from '../controllers/user-controllers';
@@ -22,6 +23,7 @@ import { patchNameValidation } from '../controllers/patch-name-validator';
 import { patchImageValidation } from '../controllers/patch-image-validator';
 import { patchEmailValidation } from '../controllers/patch-email-validator';
 import { imagesValidation } from '../controllers/images-validator';
+import { notesValidation } from '../controllers/notes-validator';
 
 const router = Router();
 
@@ -33,6 +35,7 @@ router.post(
 );
 router.post('/login', loginValidation, loginUser);
 router.post('/:id/images', fileUpload.single('images'), auth, imagesValidation, postImage);
+router.post('/:id/notes', auth, notesValidation, postNote);
 router.patch('/:id/name', auth, patchNameValidation, patchUserName);
 router.patch('/:id/email', auth, patchEmailValidation, patchUserEmail);
 router.patch('/:id/password', auth, patchPasswordValidation, patchUserPassword);
