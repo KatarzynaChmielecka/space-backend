@@ -3,6 +3,7 @@ import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
 
 import UserModel from '../models/user';
+import mongoose from 'mongoose';
 
 export const registerUser = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;
@@ -303,7 +304,11 @@ export const postImage = async (req: Request, res: Response) => {
       });
     }
 
-    user?.images?.push(file.path);
+    const newImage = {
+            imageUrl: file.path,
+    };
+
+    user?.images?.push(newImage);
     await user?.save();
     res.status(201).json({ success: true, message: 'Your image was added.' });
   } catch (error) {
