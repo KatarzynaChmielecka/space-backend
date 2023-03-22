@@ -7,6 +7,7 @@ interface Note {
   text: string;
 }
 interface Image {
+  _id?:string;
   imageUrl: string;
 }
 interface UserInterface {
