@@ -10,7 +10,6 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import userRoutes from './src/routes/user-routes';
 import UserModel, { UserDoc } from './src/models/user';
 
-
 const app = express();
 
 type _User = UserDoc;
@@ -24,13 +23,21 @@ declare global {
 }
 
 app.use(function (_req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'https://space-git-userpage-katarzynachmielecka.vercel.app');
+  res.header(
+    'Access-Control-Allow-Origin',
+    // 'https://space-git-userpage-katarzynachmielecka.vercel.app'
+    // 'http://localhost:3000',
+    '*',
+  );
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   );
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+  );
   next();
 });
 app.use(bodyParser.json());
