@@ -6,12 +6,14 @@ import UserModel from '../models/user';
 
 export const registerUser = async (req: Request, res: Response) => {
   const file = (req as { file?: any }).file;
+
   if (req.body.password !== req.body.passwordConfirmation) {
     res.status(400).json({
       message: 'Passwords are different',
     });
     return;
   }
+  
   UserModel.register(
     new UserModel({
       username: req.body.username,
@@ -135,6 +137,7 @@ export const patchUserEmail = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const user = await UserModel.findById(id);
+    
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -189,9 +192,11 @@ export const patchUserPassword = async (req: Request, res: Response) => {
     }
 
     if (newPassword !== newPasswordConfirmation) {
-      return res.status(400).json({ message: 'New password and confirmation do not match.' });
+      return res
+        .status(400)
+        .json({ message: 'New password and confirmation do not match.' });
     }
-    
+
     user.authenticate(password, (_err, user, passwordErr) => {
       if (passwordErr) {
         if (passwordErr.name === 'IncorrectPasswordError') {
@@ -303,7 +308,11 @@ export const postImage = async (req: Request, res: Response) => {
       });
     }
 
-    user?.images?.push(file.path);
+    const newImage = {
+      imageUrl: file.path,
+    };
+
+    user?.images?.push(newImage);
     await user?.save();
     res.status(201).json({ success: true, message: 'Your image was added.' });
   } catch (error) {
@@ -311,6 +320,71 @@ export const postImage = async (req: Request, res: Response) => {
       success: false,
       message:
         'Something went wrong during adding image. Please try again later.',
+    });
+  }
+};
+
+export const postNote = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to add note.',
+      });
+    }
+
+    const note = {
+      createdAt: new Date(),
+      text: req.body.note,
+    };
+
+    user?.notes?.push(note);
+    await user?.save();
+    res.status(201).json({ success: true, message: 'Your note was added.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        'Something went wrong during adding note. Please try again later.',
+    });
+  }
+};
+
+export const deleteImage = async (req: Request, res: Response) => {
+  try {
+    const { id, imageId } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to delete image.',
+      });
+    }
+
+    if (user?.images) {
+      const imageIndex = user.images.findIndex(
+        (image) => image._id!.toString() === imageId,
+      );
+      if (imageIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          message: 'Image not found.',
+        });
+      }
+
+      user.images.splice(imageIndex, 1);
+    }
+    await user?.save();
+    res.status(204).json({ success: true, message: 'Your image was deleted.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        'Something went wrong during deleting image. Please try again later.',
     });
   }
 };
