@@ -24,7 +24,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       throw err;
     }
     if (token === undefined || !token.includes('.')) {
-      err = new Error("You aren't allowed to be here.Please, login.");
+      err = new Error("You aren't allowed to be here. Please, login.");
       err.statusCode = 400;
 
       throw err;
@@ -64,19 +64,20 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
       throw err;
     }
-    
+
     const currentTime = Math.floor(Date.now() / 1000);
-    if (decodedToken.iat! + 60*60 < currentTime) {
-      err = new Error('This token has expired. Please sign in again.');
+    if (decodedToken.iat! + 60 * 60 < currentTime) {
+      err = new Error('This token has expired. Please log in again.');
       err.statusCode = 400;
 
       throw err;
+
     }
 
     const user = (await UserModel.findById(decodedToken.userId)) as UserDoc;
 
     if (user && !decodedToken.userId) {
-      err = new Error('This token is no longer valid. Please sign in again.');
+      err = new Error('This token is no longer valid. Please log in again.');
       err.statusCode = 400;
 
       throw err;
@@ -85,6 +86,9 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     next();
   } catch (err: any) {
+    console.log(err)
+
+
     return res
       .status(err.statusCode || 400)
       .json({ message: err.message || 'Oops! Something went wrong.' });
