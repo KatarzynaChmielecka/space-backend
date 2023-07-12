@@ -1,4 +1,4 @@
-import { JsonWebTokenError, JwtPayload, TokenExpiredError, verify } from 'jsonwebtoken';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 
 import UserModel, { UserDoc } from '../models/user';
