@@ -1,4 +1,4 @@
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { JwtPayload, TokenExpiredError, verify } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 
 import UserModel, { UserDoc } from '../models/user';
@@ -31,7 +31,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     if (token === undefined) {
-      err = new Error('buuuu');
+      err = new Error('Something went wrong. Log in again');
       err.statusCode = 401;
 
       throw err;
@@ -93,4 +93,5 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       .status(err.statusCode || 400)
       .json({ message: err.message || 'Oops! Something went wrong.' });
   }
-};
+
+}

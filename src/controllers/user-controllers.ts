@@ -13,7 +13,7 @@ export const registerUser = async (req: Request, res: Response) => {
     });
     return;
   }
-  
+
   UserModel.register(
     new UserModel({
       username: req.body.username,
@@ -137,7 +137,7 @@ export const patchUserEmail = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const user = await UserModel.findById(id);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
