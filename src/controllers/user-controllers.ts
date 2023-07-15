@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from 'express';
 import UserModel from '../models/user';
 
 export const registerUser = async (req: Request, res: Response) => {
-  const file = (req as { file?: any }).file;
+  const file = req.file;
 
   if (req.body.password !== req.body.passwordConfirmation) {
     res.status(400).json({
@@ -62,7 +62,7 @@ export const logoutUser = (req: Request, res: Response) =>
   });
 
 export const patchAvatar = async (req: Request, res: Response) => {
-  const file = (req as { file?: any }).file;
+  const file = req.file;
   const data = { avatar: file?.path.replace('\\', '/') };
   try {
     const { id } = req.params;
@@ -295,8 +295,8 @@ export const allNames = (_req: Request, res: Response, next: NextFunction) => {
 };
 
 export const postImage = async (req: Request, res: Response) => {
-  const file = (req as { file?: any }).file;
 
+  const { file } = req || { file: "" };
   try {
     const { id } = req.params;
     const user = await UserModel.findById(id);
@@ -309,7 +309,7 @@ export const postImage = async (req: Request, res: Response) => {
     }
 
     const newImage = {
-      imageUrl: file.path,
+      imageUrl: file?.path as string,
     };
 
     user?.images?.push(newImage);
