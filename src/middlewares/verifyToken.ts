@@ -85,7 +85,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     req.user = user;
 
     next();
-  } catch (err) {
+  } catch (err:any) {
     console.log(err)
 
 
