@@ -324,35 +324,6 @@ export const postImage = async (req: Request, res: Response) => {
   }
 };
 
-export const postNote = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const user = await UserModel.findById(id);
-
-    if (user?._id.toString() !== req.user?._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: 'You are not allowed to add note.',
-      });
-    }
-
-    const note = {
-      createdAt: new Date(),
-      text: req.body.note,
-    };
-
-    user?.notes?.push(note);
-    await user?.save();
-    res.status(201).json({ success: true, message: 'Your note was added.' });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message:
-        'Something went wrong during adding note. Please try again later.',
-    });
-  }
-};
-
 export const deleteImage = async (req: Request, res: Response) => {
   try {
     const { id, imageId } = req.params;
@@ -388,3 +359,118 @@ export const deleteImage = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const postNote = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to add note.',
+      });
+    }
+
+    const note = {
+      createdAt: new Date(),
+      text: req.body.note,
+    };
+
+    user?.notes?.push(note);
+    await user?.save();
+    res.status(201).json({ success: true, message: 'Your note was added.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        'Something went wrong during adding note. Please try again later.',
+    });
+  }
+};
+
+export const deleteNote = async (req: Request, res: Response) => {
+  try {
+    const { id, noteId } = req.params;
+    const user = await UserModel.findById(id);
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to delete note.',
+      });
+    }
+
+    if (user?.notes) {
+      const noteIndex = user.notes.findIndex(
+        (note) => note._id!.toString() === noteId,
+      );
+      if (noteIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          message: 'Note not found.',
+        });
+      }
+
+      user.notes.splice(noteIndex, 1);
+    }
+    await user?.save();
+    res.status(204).json({ success: true, message: 'Your note was deleted.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        'Something went wrong during deleting image. Please try again later.',
+    });
+  }
+};
+
+
+export const patchNote = async (req: Request, res: Response) => {
+  try {
+    const { id, noteId } = req.params;
+    const { text } = req.body;
+
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed to update note.',
+      });
+    }
+    let noteIndex: number = -1;
+    if (user?.notes) {
+      noteIndex = user.notes.findIndex(
+        (note) => note._id!.toString() === noteId,
+      );
+
+
+      if (noteIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          message: 'Note not found.',
+        });
+      }
+    }
+
+    if (user.notes && noteIndex !== undefined) {
+      user.notes[noteIndex].text = text;
+    }
+
+
+    await user.save()
+    return res.status(200).json({ message: 'Note was updated' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong with updating data',
+    });
+  }
+}

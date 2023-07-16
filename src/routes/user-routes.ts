@@ -4,9 +4,11 @@ import UserModel from '../models/user';
 import {
   allNames,
   deleteImage,
+  deleteNote,
   loginUser,
   logoutUser,
   patchAvatar,
+  patchNote,
   patchUserEmail,
   patchUserName,
   patchUserPassword,
@@ -41,7 +43,9 @@ router.patch('/:id/name', auth, patchNameValidation, patchUserName);
 router.patch('/:id/email', auth, patchEmailValidation, patchUserEmail);
 router.patch('/:id/password', auth, patchPasswordValidation, patchUserPassword);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchImageValidation, patchAvatar);
+router.patch('/:id/notes/:noteId', auth, patchNote)
 router.delete('/:id/images/:imageId', auth, deleteImage)
+router.delete('/:id/notes/:noteId', auth, deleteNote)
 router.get('/logout', auth, logoutUser);
 //test route
 router.get('/all', auth, allNames);
