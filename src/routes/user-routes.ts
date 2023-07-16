@@ -27,6 +27,7 @@ import { patchImageValidation } from '../controllers/patch-image-validator';
 import { patchNameValidation } from '../controllers/patch-name-validator';
 import { patchPasswordValidation } from '../controllers/patch-password-validator';
 import { userValidation } from '../controllers/user-validator';
+import { patchNoteValidation } from '../controllers/patch-note-validator';
 
 const router = Router();
 
@@ -43,7 +44,7 @@ router.patch('/:id/name', auth, patchNameValidation, patchUserName);
 router.patch('/:id/email', auth, patchEmailValidation, patchUserEmail);
 router.patch('/:id/password', auth, patchPasswordValidation, patchUserPassword);
 router.patch('/:id/image', fileUpload.single('avatar'), auth, patchImageValidation, patchAvatar);
-router.patch('/:id/notes/:noteId', auth, patchNote)
+router.patch('/:id/notes/:noteId', auth, patchNoteValidation, patchNote)
 router.delete('/:id/images/:imageId', auth, deleteImage)
 router.delete('/:id/notes/:noteId', auth, deleteNote)
 router.get('/logout', auth, logoutUser);

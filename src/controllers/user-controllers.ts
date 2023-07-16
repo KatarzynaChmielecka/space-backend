@@ -50,6 +50,47 @@ export const registerUser = async (req: Request, res: Response) => {
   );
 };
 
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  if (!email) {
+    res.status(400).json({ success: false, message: 'Email is required' });
+  } else if (!password) {
+    res.status(400).json({ success: false, message: 'Password is required' });
+  } else {
+    passport.authenticate('local', function (err, user, info) {
+      if (err) {
+        res.status(500).json({ success: false, message: info.message });
+      } else {
+        if (!user) {
+          res.status(404).json({
+            message: 'User does not exist. Maybe you want register instead?',
+          });
+        } else {
+          req.login(user, function (err) {
+            if (err) {
+              res.json({ success: false, message: err });
+            } else {
+              const token = jwt.sign(
+                { userId: user._id, username: user.username },
+                `${process.env.ACCESS_TOKEN}`,
+                { expiresIn: '1h' },
+              );
+
+              res.status(200).json({
+                success: true,
+                message: `Hello ${user.username}. You are logged in.`,
+                token: token,
+                user: user,
+              });
+            }
+          });
+        }
+      }
+    })(req, res);
+  }
+};
+
 export const logoutUser = (req: Request, res: Response) =>
   req.logout((err) => {
     if (err) {
@@ -60,6 +101,23 @@ export const logoutUser = (req: Request, res: Response) =>
       res.status(200).json({ success: true, message: 'See you soon! :)' });
     }
   });
+
+export const userData = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const user = await UserModel.findById(id);
+  try {
+    if (user?._id.toString() === req.user?._id.toString()) {
+      res.status(200).json({ user: user });
+    }
+
+    if (user?._id.toString() !== req.user?._id.toString()) {
+      res.status(500).json({ success: false, message: 'You are not alllowed' });
+    }
+  } catch (err) {
+    res.json(err);
+  }
+};
 
 export const patchAvatar = async (req: Request, res: Response) => {
   const file = req.file;
@@ -225,64 +283,6 @@ export const patchUserPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-
-  if (!email) {
-    res.status(400).json({ success: false, message: 'Email is required' });
-  } else if (!password) {
-    res.status(400).json({ success: false, message: 'Password is required' });
-  } else {
-    passport.authenticate('local', function (err, user, info) {
-      if (err) {
-        res.status(500).json({ success: false, message: info.message });
-      } else {
-        if (!user) {
-          res.status(404).json({
-            message: 'User does not exist. Maybe you want register instead?',
-          });
-        } else {
-          req.login(user, function (err) {
-            if (err) {
-              res.json({ success: false, message: err });
-            } else {
-              const token = jwt.sign(
-                { userId: user._id, username: user.username },
-                `${process.env.ACCESS_TOKEN}`,
-                { expiresIn: '1h' },
-              );
-
-              res.status(200).json({
-                success: true,
-                message: `Hello ${user.username}. You are logged in.`,
-                token: token,
-                user: user,
-              });
-            }
-          });
-        }
-      }
-    })(req, res);
-  }
-};
-
-export const userData = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  const user = await UserModel.findById(id);
-  try {
-    if (user?._id.toString() === req.user?._id.toString()) {
-      res.status(200).json({ user: user });
-    }
-
-    if (user?._id.toString() !== req.user?._id.toString()) {
-      res.status(500).json({ success: false, message: 'You are not alllowed' });
-    }
-  } catch (err) {
-    res.json(err);
-  }
-};
-
 export const allNames = (_req: Request, res: Response, next: NextFunction) => {
   UserModel.find({}, { username: 1, _id: 0 }, (err, users) => {
     if (err || !users) {
@@ -293,6 +293,9 @@ export const allNames = (_req: Request, res: Response, next: NextFunction) => {
     }
   });
 };
+
+
+
 
 export const postImage = async (req: Request, res: Response) => {
 
@@ -360,6 +363,9 @@ export const deleteImage = async (req: Request, res: Response) => {
   }
 };
 
+
+
+
 export const postNote = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -424,7 +430,6 @@ export const deleteNote = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 export const patchNote = async (req: Request, res: Response) => {
   try {
