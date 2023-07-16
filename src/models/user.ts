@@ -5,9 +5,10 @@ import { Document, PassportLocalModel, Schema, model } from 'mongoose';
 interface Note {
   createdAt: Date;
   text: string;
+  _id?: string
 }
 interface Image {
-  _id?:string;
+  _id?: string;
   imageUrl: string;
 }
 interface UserInterface {
@@ -25,7 +26,7 @@ export interface UserDoc extends UserInterface, Document {
     cb: (err?: Error | null, user?: this, passwordErr?: Error | null) => void,
   ): void;
 }
-interface UserModel extends PassportLocalModel<UserDoc> {}
+interface UserModel extends PassportLocalModel<UserDoc> { }
 
 const options = {
   errorMessages: {
